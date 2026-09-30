@@ -62,6 +62,26 @@ Windows 上它把 `\n` 翻译成 `\r\n`，而 `.gitattributes` 钉的是 LF —�
 > ⚠️ **必须连生成器一起改**：`docs/phase7c_directed.md` 是 `phase7c.py` 的产物，
 > 只改文档的话，下次重跑会把错误引用**原样写回**。实测验证过这一点。
 
+### 修：三处「文档与代码不一致」（这轮新查出来的）
+
+这三处不改行为，但都属于同一个毛病 —— **文档说的和代码做的不一样**，
+而这个仓库最看重「声称必须可核验」：
+
+| 位置 | 原来写的 | 实际是 |
+|---|---|---|
+| `checks.py` 顶部跑法 | `python field/checks.py` | 代码平铺在仓库根，路径早就没有 `field/` 前缀了 |
+| `CONTRIBUTING.md` 加探针第 2 条 | 用 `paths.report("名字.md")` | 唯一写入口是 `paths.write("名字.md", 内容)`；`report()` 只给落点 |
+| `README.en.md` | `20 B-D checks`（两处） | 22 条（21 产物 + 1 数据）—— 与中文侧一致 |
+
+前两条尤其阴：**它们在指令里**。照 `CONTRIBUTING.md` 那条写，新探针会直接 `write_text` 到
+`report()` 返回的路径上 —— 恰好绕开唯一写入口，也就是绕开这轮刚立的 `B-D16`。
+
+顺带在 `CONTRIBUTING.md` 补了一节**「报告是产物时，先改生成器」**：
+`docs/phase7c_directed.md` 这类文件是探针的产物，手改等于没改。
+
+`README.en.md` 同时补上了 `--expect-skipped` / `--product-only` 两条命令
+（中文侧有、英文侧原先没有）。
+
 ### 实测
 
 ```

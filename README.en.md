@@ -91,7 +91,9 @@ from "falsified" to "not falsified, but resting on a single edge".**
 ## How to run
 
 ```
-python checks.py              # 20 B-D falsification checks (19 product + 1 data; 6 skipped without a corpus)
+python checks.py              # 22 B-D falsification checks (21 product + 1 data)
+python checks.py --expect-skipped 6   # without a corpus: exactly 6 are skipped, and that is asserted
+python checks.py --product-only       # exit code does not carry the upstream-data check
 python phase1.py              # graph / spectrum / effective resistance / Forman / Fiedler cut / geometry
 python curvature_compare.py   # Ollivier-Ricci vs Forman (with three hand-computed self-tests)
 python phase2c.py             # can intent control the construction (Mantel permutation)
@@ -112,6 +114,9 @@ python phase7d.py             # attack typology + random-graph invariants (9)(10
 
 The only dependency is **PyYAML** (to reuse the upstream front-matter parser rather than rewrite
 it). Everything is deterministic and runs in seconds.
+
+Because `B-D7` is red **by design** (its target is upstream data), running `checks.py` *with* a
+corpus exits 1 on purpose — that is the check firing, not a broken repository.
 
 (`phase2.py` and `phase2b_readout.py` are process records: the former is the **voided** version of
 a test, the latter the probe that diagnosed why it was void. They are kept for auditability —
@@ -160,7 +165,7 @@ documents.
 
 `graph.py` builds the graph from `nodes/` (taking only id/type/relations/cues — **no body text**),
 `corpus.py` locates the corpus, `paths.py` decides where reports land,
-`checks.py` holds the 20 falsification checks and `phase*.py` are the probes.
+`checks.py` holds the 22 falsification checks and `phase*.py` are the probes.
 
 ---
 

@@ -9,7 +9,9 @@
 
 跑法：
 
-    python field/checks.py          # 退出码 0 = 产物检查全过
+    python checks.py          # 退出码 0 = 产物检查全过
+    python checks.py --product-only     # 退出码不背上游数据检查（B-D7 的靶子在语料上）
+    python checks.py --expect-skipped 6 # 缺语料时恰好 6 条跳过；这条断言会抓住「退化成永远跳过」
 
 ---
 编号与含义
