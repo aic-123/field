@@ -172,7 +172,7 @@ def main() -> int:
              "A3 证明轨迹有用，A1 不适用")
     L.append("")
 
-    paths.report("phase6_usability.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.write("phase6_usability.md", "\n".join(L) + "\n")
 
     print("── C7a 无参数判据 vs 基线 ──")
     for name, m in (("TAU 线（基线）", tau), ("场:可构造性（无参数）", fld)):

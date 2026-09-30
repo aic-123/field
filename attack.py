@@ -25,7 +25,8 @@ DCE 只有一个 `contradiction`，会把这三件事混成一件事。而它们
 于是本模块的第一件事不是分类，是**问数据里有没有这些东西**。
 答案是：**两个都没有。**
 
-    Scaffold 的 `relations` 是 `list[str]`，**不带关系种类**（`SPEC.md:128`）
+    Scaffold 的 `relations` 是 `list[str]`，**不带关系种类**
+    （上游 `aic-123/Scaffold` 的 `SPEC.md` 定的；它不在 rl-scaffold 里）
     也没有任何"规则"对象
 
 所以：**rebut 在本数据上不可表达，undercut 也不可表达，只有 undermine 可以。**

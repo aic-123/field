@@ -214,7 +214,7 @@ def main() -> int:
             L.append(f"- {label}：命中率 {r:.3f}，位次中位 {m}")
     L.append("")
 
-    paths.report("phase3_robustness.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.write("phase3_robustness.md", "\n".join(L) + "\n")
 
     # ── 终端 ──────────────────────────────────────────────────────────
     print("══ A · 瓶颈在排序还是在判据线 ══")

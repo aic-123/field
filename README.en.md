@@ -50,6 +50,21 @@ was made **lazy**. See the note in `graph.py:load_nodes`.
 
 ---
 
+## What it is not
+
+- **Not a product — an experiment log.** It reads the corpus's `nodes/` and **writes not a
+  single byte** — it changes no validation rule, no retrieval, no view.
+- **The conclusions are only answerable for this one graph** (36 nodes / 112 situations /
+  47 inter-node relations). Swap the graph and every number below is void.
+- **Synthetic graphs are for mechanism validation only**, never for reporting performance.
+- **This repository cannot be run in full**: without a corpus, six checks are
+  **explicitly skipped**. **Skipped is not passed** — they verified nothing.
+- **`B-D7` is red, and this repository does not fix it.** Its target is upstream data
+  (8 of 17 `HELD_OUT` entries are cue text); the fix needs an upstream decision.
+  This repository only reports — it **never loosens a check and never deletes data**.
+
+---
+
 ## Results (in one breath)
 
 **Of four kill tests, two pass (spectrum, control), one passes on weak evidence (decidability),

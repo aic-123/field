@@ -120,7 +120,7 @@ def main() -> int:
     L.append("- 随机图只到 13 个节点（Jacobi 是 O(n³)、有效电阻三角不等式是 O(n³)，")
     L.append("  再大就跑不动了）。**所以「成立」只在中小规模上成立。**")
     L.append("- 没有把不变量测试接进 CI（本模块不是 CI 的一部分）。")
-    paths.report("phase7d_attack_and_invariants.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.write("phase7d_attack_and_invariants.md", "\n".join(L) + "\n")
 
     print("── A 三分攻击 ──")
     print(f"  真实数据：rebut 可表达={expr['rebut']['expressible']}  "

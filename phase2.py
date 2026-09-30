@@ -228,7 +228,7 @@ def main() -> int:
     L.append(f"- {len(fields)} 个意图给出的**场**之间，最小距离 {dmin:.6f}")
     L.append("- 这一层恒真（线性 ODE + L⁺ 在常数补上可逆），所以它**不作为 C2 的证据**。\n")
 
-    paths.report("phase2_controllability.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.write("phase2_controllability.md", "\n".join(L) + "\n")
 
     # ── 终端摘要 ──────────────────────────────────────────────────────
     print("── C3 确定性 ──")

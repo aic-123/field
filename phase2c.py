@@ -211,7 +211,7 @@ def main() -> int:
         L.append(f"| {alpha} | {min(ss)}–{max(ss)} | {len(cc)}/{len(intents)} |")
     L.append("")
 
-    paths.report("phase2c_controllability.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.write("phase2c_controllability.md", "\n".join(L) + "\n")
 
     print(f"锚点 {len(anchors)}：{'、'.join(anchors)}")
     print(f"意图空间（有效电阻）sd = {spread(refR)['sd']:.4f}   "

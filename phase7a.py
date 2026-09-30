@@ -154,7 +154,7 @@ def main() -> int:
     L.append("  这里的「视图」是用不同种子造出来的，属于机制演示，**不是多来源评测**。")
     L.append("- max-min 用投影次梯度上升求解，是局部方法，不保证全局最优；")
     L.append("  只报了它达到的最小投影，没有报与全局最优的差距。")
-    paths.report("phase7a_direction.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.write("phase7a_direction.md", "\n".join(L) + "\n")
 
     print("── 方向一致性 ──")
     print("  机制验证（噪声扫描）：")

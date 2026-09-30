@@ -2,8 +2,11 @@
 
 ## 方向语义的登记（上游文档冲突）
 
-- `SPEC.md:128`：A 出现在 B 的 relations 里 ⟹ A 指向 B
-- `by-situation.md:298`：论据 → 立场 → 议题（**与上一条相反**）
+- **上游 `SPEC.md` 自己内部矛盾**（散文规则 vs 它自己的方向表）：
+  - 散文规则：A 出现在 B 的 relations 里 ⟹ A 指向 B
+  - 方向表：论据 → 立场 → 议题（**与上一条推出相反方向**）
+- `by-situation.md:298`（rl-scaffold 的生成物）与方向表一侧一致。
+- ⚠️ `SPEC.md` 属于上游 `aic-123/Scaffold`，**不在 rl-scaffold 里**。
 - 实测：`arg-0001` 的 relations 列出 `stance-0001`
 - **本模块采用读法约定**（= `find_path` 的行走方向）：
   「X 的 relations 列出 Y ⟹ X → Y」
@@ -75,4 +78,4 @@
 
 - 没有把有向性并进 Phase 1–6 的任何判据。变量一次只动一个。
 - 没有分解「方向冲突」对它有多大影响（那需要知道正确方向，
-  而上游文档 `SPEC.md:128` 与 `by-situation.md:298` 互相矛盾）。
+  而上游 `SPEC.md` 的散文规则与它自己的方向表互相矛盾）。

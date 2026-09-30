@@ -190,7 +190,7 @@ def main() -> int:
     L.append("而不是「确定变多解」。前者可测且已测到，后者在这套机制里做不到。")
     L.append("")
 
-    paths.report("phase5_decay.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.write("phase5_decay.md", "\n".join(L) + "\n")
 
     print("── 遗忘曲线 ──")
     for r in rows:

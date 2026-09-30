@@ -4,17 +4,26 @@
 先说清一件事：方向语义在上游文档里是矛盾的
 ------------------------------------------
 
-    `SPEC.md:128`   「A 出现在 B 的 relations 里，表示「A 指向 B」」
-    `by-situation.md:298`  「**论据 → 立场**、**立场 → 议题**……反向关系写在正文里」
+⚠️ **先分清这些文件名各自住在哪个仓库**（这一节原来写错过，见下）：
+
+    SPEC.md               上游 `aic-123/Scaffold` 的文件，**不在 rl-scaffold 里**
+    index/by-situation.md rl-scaffold 的生成物
+
+    SPEC.md 的散文规则    「A 出现在 B 的 relations 里，表示「A 指向 B」」
+    SPEC.md 自己的方向表  「**论据 → 立场**、**立场 → 议题**……反向关系写在正文里」
 
 而实测数据：`arg-0001` 的 `relations` 列的是 `stance-0001`。
 两者只能对一个：
 
-    SPEC 那条 ⟹ stance-0001 → arg-0001
-    读法约定那条 ⟹ arg-0001 → stance-0001   ← 与 find_path 的行走方向一致
+    SPEC 散文规则那条 ⟹ stance-0001 → arg-0001
+    SPEC 方向表那条   ⟹ arg-0001 → stance-0001   ← 与 find_path 的行走方向一致
 
-**本模块采用后者（实践约定）**，理由：`find_path` 是沿着 `relations` 正向走的，
-而 `by-situation.md` 的读法约定与它一致；`README.md:47` 也明说方向「查不了，也不打算查」。
+**冲突在上游 `SPEC.md` 自己内部**（散文规则与它自己的方向表相反），
+不是「SPEC.md 与 by-situation.md 互相矛盾」——原先那种写法把引用范围
+伸到了本仓库实际读不到的地方。详见 `DECLARATION.md` §五·三。
+
+**本模块采用方向表那一侧（实践约定）**，理由：`find_path` 是沿着 `relations` 正向走的，
+而 `SPEC.md` 自己的方向表与它一致；`README.md:47` 也明说方向「查不了，也不打算查」。
 所以这是一处**上游文档冲突**，登记在案，不擅自改数据。
 
 ---
@@ -64,8 +73,11 @@ def main() -> int:
     L: list[str] = []
     L.append("# Phase 7c · 有向谱与有向 Ollivier-Ricci\n")
     L.append("## 方向语义的登记（上游文档冲突）\n")
-    L.append("- `SPEC.md:128`：A 出现在 B 的 relations 里 ⟹ A 指向 B")
-    L.append("- `by-situation.md:298`：论据 → 立场 → 议题（**与上一条相反**）")
+    L.append("- **上游 `SPEC.md` 自己内部矛盾**（散文规则 vs 它自己的方向表）：")
+    L.append("  - 散文规则：A 出现在 B 的 relations 里 ⟹ A 指向 B")
+    L.append("  - 方向表：论据 → 立场 → 议题（**与上一条推出相反方向**）")
+    L.append("- `by-situation.md:298`（rl-scaffold 的生成物）与方向表一侧一致。")
+    L.append("- ⚠️ `SPEC.md` 属于上游 `aic-123/Scaffold`，**不在 rl-scaffold 里**。")
     L.append("- 实测：`arg-0001` 的 relations 列出 `stance-0001`")
     L.append("- **本模块采用读法约定**（= `find_path` 的行走方向）：")
     L.append("  「X 的 relations 列出 Y ⟹ X → Y」")
@@ -159,8 +171,8 @@ def main() -> int:
     L.append("### 没做的事\n")
     L.append("- 没有把有向性并进 Phase 1–6 的任何判据。变量一次只动一个。")
     L.append("- 没有分解「方向冲突」对它有多大影响（那需要知道正确方向，")
-    L.append("  而上游文档 `SPEC.md:128` 与 `by-situation.md:298` 互相矛盾）。")
-    paths.report("phase7c_directed.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    L.append("  而上游 `SPEC.md` 的散文规则与它自己的方向表互相矛盾）。")
+    paths.write("phase7c_directed.md", "\n".join(L) + "\n")
 
     print("── 有向谱与有向 OR ──")
     print(f"  π 最大/最小 = {spread:.1f} 倍（均匀是 1.0）")

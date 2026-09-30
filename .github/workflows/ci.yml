@@ -37,10 +37,15 @@ jobs:
         run: python -m pip install --quiet -r requirements.txt
 
       # ⚠️ 没有语料时 B-D1 / B-D2 / B-D7 / B-D11 / B-D14 / B-D15 六条会**显式跳过**
-      # 并单独计数。跳过不等于通过——所以这里断言的是"14 条过、0 条命中"，
+      # 并单独计数。跳过不等于通过——所以这里断言的是"恰好 6 条跳过"，
       # 而不是"退出码 0 就没事"。
-      - name: 检查（不带语料；跳过会被单独计出来）
-        run: python checks.py
+      # 这一条不是装饰：跳过态的退出码也是 0，某条检查若悄悄退化成永远跳过
+      # （判错 is_available、语料换目录布局），没有这个断言谁也不会发现。
+      - name: 检查（不带语料；断言恰好 6 条跳过）
+        run: python -m checks --expect-skipped 6
+
+      - name: 合成图界面桥机制验证（**不需要语料**）
+        run: python phase7b.py
 
       - name: 合成图界面桥机制验证（**不需要语料**）
         run: python phase7b.py

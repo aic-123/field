@@ -169,7 +169,7 @@ def main() -> int:
     L.append("\n（随机意图的场本来就没有结构，所以它的恢复率是「随机也能对」的噪声底。）")
     L.append("三层都要跟这个底比，不是跟 0 比。）\n")
 
-    paths.report("phase2b_readout.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.write("phase2b_readout.md", "\n".join(L) + "\n")
 
     print("── 三层意图恢复率（尺子 = 意图空间距离，零线 1/12=0.083）──")
     for e, alpha, t, a0, a1, a2, sf, ss, sh in rows:

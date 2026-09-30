@@ -26,6 +26,9 @@
     B-D6b  位移与 f-string 格式符不许误报
     B-D6c  字符串字面量里的比较不许误报
     B-D8   曲率必须对上三条手算值（这条线最容易骗人，专防）
+    B-D16  报告必须走 paths.write（不许直接 write_text：Windows 上会写出 CRLF，
+           让 CI 那步「报告与代码同步」每次假红）
+    B-D16a 种入一处直接 write_text 必须抓到（防空转）
 
 数据检查（靶子在上游数据，不在本模块产物）：
 
@@ -625,6 +628,58 @@ def bd15_knockout_does_not_touch_the_graph() -> tuple[bool, str]:
     return True, f"跑遍 {n} 个模式，邻接表逐字节不变；其中 {changed} 个模式确实改变了场"
 
 
+def bd16_reports_go_through_one_writer() -> tuple[bool, str]:
+    """报告必须走 `paths.write`，不许直接 `write_text`。
+
+    为什么这条是硬的不只是风格：`Path.write_text` 在 Windows 上把 `\\n` 写成 `\\r\\n`，
+    而 `.gitattributes` 钉的是 LF。于是每次重跑探针，工作区里的报告全部变脏，
+    CI 那步「报告与代码同步」就**每次都假红** —— 真信号（判据改了没重跑）
+    被假信号（行尾变了）淹没。实测过一次：跑 16 个探针 → 19 份报告全变。
+
+    `paths.write` 在 `newline="\\n"` 上钉死，所以这条检查就是让那个修复**不会退化**。
+    """
+    offenders = []
+    # 要覆盖**所有会写报告的模块**：16 个探针 + curvature_compare，以及种入的临时探针。
+    # 早先只 glob `phase*.py`，于是防空转自检种进去的 `_tmp_probe_bd16.py` 扫不到
+    # —— 自检当场把这条抓了出来。范围要按"谁可能写报告"定，不是按文件名前缀定。
+    cands = [p for p in sorted(ROOT.glob("*.py"))
+             if p.name.startswith("phase") or p.name == "curvature_compare.py"
+             or p.name.startswith("_tmp_probe")]
+    for p in cands:
+        if not p.is_file():
+            continue
+        for i, line in enumerate(p.read_text(encoding="utf-8").splitlines(), 1):
+            if line.lstrip().startswith("#"):
+                continue
+            if "write_text" in line and "paths.write(" not in line:
+                offenders.append(f"{p.name}:{i}")
+    if offenders:
+        return False, f"{len(offenders)} 处绕过了 paths.write：{offenders[:3]}"
+    if not any("paths.write(" in q.read_text(encoding="utf-8")
+               for q in ROOT.glob("phase*.py")):
+        return False, "一个探针都没用 paths.write —— 检查是不是空转了"
+    return True, "全部报告都走 paths.write（newline 钉死 LF）"
+
+
+def test_bd16_fires_on_a_direct_write() -> tuple[bool, str]:
+    """防空转：种一个直接 `write_text` 的探针进去，这条必须抓到。"""
+    tmp = ROOT / "_tmp_probe_bd16.py"
+    try:
+        tmp.write_text(
+            'import paths\n'
+            'paths.report("x.md").write_text("a\\n", encoding="utf-8")\n',
+            encoding="utf-8", newline="\n")
+        ok, why = bd16_reports_go_through_one_writer()
+        if ok is not False:
+            return False, f"种入的直接 write_text 没被抓到（返回 {ok!r}）"
+        if "_tmp_probe_bd16.py" not in why:
+            return False, f"抓到了但没指名道姓：{why}"
+    finally:
+        if tmp.exists():
+            tmp.unlink()
+    return True, "种入的直接 write_text 被抓到，且指名了文件"
+
+
 CHECKS = [
     ("B-D1", "构造必须确定性", bd1_determinism),
     ("B-D2", "意图必须影响构造", bd2_intent_must_matter),
@@ -644,6 +699,8 @@ CHECKS = [
     ("B-D13", "conformal 覆盖必须兑现", bd13_conformal_coverage_holds),
     ("B-D14", "共识须对复制精确免疫", bd14_consensus_is_popularity_immune),
     ("B-D15", "敲除不许动图", bd15_knockout_does_not_touch_the_graph),
+    ("B-D16", "报告须走唯一写入口（行尾钉 LF）", bd16_reports_go_through_one_writer),
+    ("B-D16a", "直写 write_text 必须抓到（防空转）", test_bd16_fires_on_a_direct_write),
 ]
 
 # 靶子在上游数据、不在本模块产物的检查。分开报，不混进产物的绿/红。
@@ -671,10 +728,23 @@ def main(argv=None) -> int:
     为什么需要它：`B-D7` 的靶子是**语料**（`HELD_OUT` 里混了 cue 原文），
     不是本仓库的产物。拿它当本仓库的门禁，等于让上游的欠账卡住这里的 CI——
     而那一头只有上游能改。所以 CI 用这个开关：**报告照印，退出码不背它。**
+
+    `--expect-skipped N`：断言**恰好跳过 N 条**，不符就退出码 1。
+    为什么需要它：跳过态的退出码也是 0，所以"某条检查悄悄退化成永远跳过"
+    （例如某个 `is_available()` 判错、或语料换了个目录布局）**不会被任何东西发现**。
+    把期望值写成参数，这条不变式才从注释变成可执行的东西。
     """
     import sys as _sys
     args = list(_sys.argv[1:] if argv is None else argv)
     product_only = "--product-only" in args
+
+    expect_skipped = None
+    if "--expect-skipped" in args:
+        i = args.index("--expect-skipped")
+        if i + 1 >= len(args) or not args[i + 1].lstrip("-").isdigit():
+            print("⚠️ `--expect-skipped` 后面要跟一个整数。")
+            return 2
+        expect_skipped = int(args[i + 1])
 
     print("B-D 否证检查 —— 抓的是**不许出现**的东西。\n")
     if product_only:
@@ -713,7 +783,15 @@ def main(argv=None) -> int:
         print("⚠️ 数据命中的靶子在上游数据，修法需拍板，不自行放宽、不删数据（见函数注释）。")
         if product_only:
             print("   本轮带 --product-only，所以它不进退出码 —— 但它**仍然是红的**。")
-    fail = bool(bad or (data_bad and not product_only))
+
+    skip_mismatch = expect_skipped is not None and len(skipped) != expect_skipped
+    if skip_mismatch:
+        print(f"⚠️ 跳过数不符：期望 {expect_skipped} 条，实际 {len(skipped)} 条"
+              f"（{'、'.join(skipped) if skipped else '无'}）。")
+        print("   这防的是**某条检查悄悄退化成永远跳过** —— 它退出码照旧是 0，"
+              "没有这一条就没人会发现。")
+
+    fail = bool(bad or (data_bad and not product_only) or skip_mismatch)
     print(f"退出码 {1 if fail else 0}")
     return 1 if fail else 0
 

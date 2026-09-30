@@ -61,7 +61,7 @@ def main() -> int:
         L.append("\n### 悬挂 relations 引用（指向不存在的 id）\n")
         for a, b in full["dangling"]:
             L.append(f"- {a} → {b}")
-    paths.report("phase1_graph.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.write("phase1_graph.md", "\n".join(L) + "\n")
 
     # ── 谱 + 有效电阻 ─────────────────────────────────────────────────
     lap = S.laplacian(node_adj, node_ids)
@@ -98,7 +98,7 @@ def main() -> int:
     Sl.append("\n## 有效电阻距离 R(i,j) 的分布\n")
     for k, v in rst.items():
         Sl.append(f"- {k}: {v}")
-    paths.report("phase1_spectrum.md").write_text("\n".join(Sl) + "\n", encoding="utf-8")
+    paths.write("phase1_spectrum.md", "\n".join(Sl) + "\n")
 
     # ── 曲率 + 分解 ───────────────────────────────────────────────────
     rows = C.forman(node_adj, node_ids)
@@ -130,7 +130,7 @@ def main() -> int:
     Cl.append("\n## 没做的事\n")
     Cl.append("- **没有实现 Ollivier-Ricci 曲率**（在 `ollivier.py` 里补做了，")
     Cl.append("  对比见 `phase1b_curvature_compare.md`）。本阶段的 kill test 2 用的是 Forman。")
-    paths.report("phase1_curvature.md").write_text("\n".join(Cl) + "\n", encoding="utf-8")
+    paths.write("phase1_curvature.md", "\n".join(Cl) + "\n")
 
     # ── 空间 ──────────────────────────────────────────────────────────
     emb = GEO.embed_coords(vals, vecs, node_ids, dim=3)
@@ -162,7 +162,7 @@ def main() -> int:
     Gl.append("\n## 没做的事\n")
     Gl.append("- 不判定哪一侧更重要。两半等价，切本身才是信息。")
     Gl.append("- 这是**一个**切，不是全部切。更高的特征向量给出更细的切，本阶段先只看主切。")
-    paths.report("phase1_geometry.md").write_text("\n".join(Gl) + "\n", encoding="utf-8")
+    paths.write("phase1_geometry.md", "\n".join(Gl) + "\n")
 
     # ── 终端摘要 ──────────────────────────────────────────────────────
     line("── 图 ──")

@@ -273,7 +273,7 @@ def main() -> int:
     L.append(f"- 预测：删掉正确节点后 ρ_R1 下降。**{len(drops)}/{len(lesion)} 个目标符合预测。**")
     L.append("- 幅度很小（0.0x），所以这个实验**只能算弱证据**，不能算确认。\n")
 
-    paths.report("phase4_grounding.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.write("phase4_grounding.md", "\n".join(L) + "\n")
 
     # ── 终端 ──────────────────────────────────────────────────────────
     print("══ 图结构 ══")

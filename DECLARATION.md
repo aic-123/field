@@ -245,7 +245,7 @@ git clone git@github.com:aic-123/field.git
 cd field
 
 # 默认布局（两个仓库并排）→ 什么都不用设
-python checks.py         # 20 条：19 产物 + 1 数据（B-D7 按设计命中，退出码 1）
+python checks.py         # 22 条：21 产物 + 1 数据（B-D7 按设计命中，退出码 1）
 python phase1.py         # 谱 / 有效电阻 / 曲率 / 几何
 python phase2c.py        # 意图能否控制构造
 python phase3.py         # 入口鲁棒性 + 匹配器排序诊断

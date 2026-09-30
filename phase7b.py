@@ -148,7 +148,7 @@ def main() -> int:
     L.append("### 没做的事\n")
     L.append("- 合成图只用来做机制验证，**不用来报任何性能数字**。")
     L.append("- 没有调 α（惰性参数），固定 1/2。")
-    paths.report("phase7b_synthetic_interfaces.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.write("phase7b_synthetic_interfaces.md", "\n".join(L) + "\n")
 
     print("── 合成图上的界面桥验证 ──")
     for r in res:
