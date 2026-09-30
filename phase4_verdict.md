@@ -1,6 +1,6 @@
 # Phase 4 判决（C5 可判据性）—— go / no-go
 
-> 跑法：`python field/phase4.py`（0.5 秒）· `python field/checks.py`
+> 跑法：`python phase4.py`（0.5 秒）· `python checks.py`
 > 产物：`phase4_grounding.md`
 
 **结论：C5 通过它预先登记的判据。但证据等级是"弱"，而且两半里有一半失败了。**

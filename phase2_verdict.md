@@ -1,7 +1,7 @@
 # Phase 2 判决（含一次自己把自己的检验做废的记录）
 
-> 跑法：`python field/phase2.py`（作废）· `python field/phase2b_readout.py`（诊断）
-> · `python field/phase2c.py`（重做）· `python field/checks.py`
+> 跑法：`python phase2.py`（作废）· `python phase2b_readout.py`（诊断）
+> · `python phase2c.py`（重做）· `python checks.py`
 > 产物：`phase2_controllability.md` · `phase2b_readout.md` · `phase2c_controllability.md`
 
 ---
@@ -150,7 +150,7 @@ L⁺S_A = L⁺e_A                        （常数向量在 L 的零空间里）
 ## 3. B-D 否证检查
 
 ```
-python field/checks.py   →  产物检查 12 条 0 命中；数据检查 1 条命中（B-D7，待拍板）
+python checks.py   →  产物检查 12 条 0 命中；数据检查 1 条命中（B-D7，待拍板）
 ```
 
 | 编号 | 检查 | 结果 |

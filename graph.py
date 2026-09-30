@@ -44,17 +44,29 @@ import sys
 from pathlib import Path
 
 _HERE = Path(__file__).resolve().parent
-_ROOT = _HERE.parent
-sys.path.insert(0, str(_ROOT / "tools"))
 
-import find_path as fp  # noqa: E402
+import corpus as C  # noqa: E402
 
 CUE_PREFIX = "C"
 EDGE_MASS = 1.0
 
 
 def load_nodes() -> tuple[dict, dict]:
-    """直接复用上游的解析。不重写 front matter 解析器。"""
+    """读节点。**语料的挂载延迟到这里。**
+
+    为什么必须延迟：本模块同时装着两种东西——
+
+        纯图工具      degrees / triangles_through / subgraph …
+        语料绑定      load_nodes / build
+
+    原来在**模块导入时**就 `C.attach()`，于是任何只是想拿到一个纯图工具的
+    模块（例如 `curvature.py` 只要 `degrees`）都会被拖去要语料——
+    「机制层不碰语料」那句话就当场变成假的。**实测就是这么被自己的测试打掉的。**
+
+    延迟之后：`import graph` 不需要语料；只有 `load_nodes()` 需要，
+    而且缺语料时给出的是清楚的指示，不是一句 ImportError。
+    """
+    _root, fp = C.attach()
     return fp.load_all()
 
 

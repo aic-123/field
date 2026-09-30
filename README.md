@@ -1,9 +1,48 @@
-# `field/` —— 曲率认知场的实验模块
+# 曲率认知场的实验模块
 
-这个目录是《曲率认知场-实验设计》的 Phase 0–6 实现，挂在 `rl-scaffold` 上。
+《曲率认知场-实验设计》的 Phase 0–6 实现，加上十项方法验证。
 
-**它读 `nodes/`，一个字都不写。** 这一点由 `phase5.py` 的快照比对和
+**它从 `rl-scaffold` 里拆出来单独成一个仓库了。** 理由不是"代码不该和知识放在一起"，
+而是：**实验的版本不该挂在产品的版本号后面**。原来它住在 `rl-scaffold/field/`，
+于是那个仓库为了这个实验发了一个产品版本（v0.0.5）——那是不对的。
+
+**它读语料的 `nodes/`，一个字都不写。** 这一点由 `phase5.py` 的快照比对和
 `checks.py` 的 B-D5 钉着。
+
+---
+
+## 它怎么拿到语料
+
+这个仓库**不含** `nodes/`。它要读一份 `rl-scaffold`（或任何同构的 Scaffold 语料）。
+位置由 `corpus.py` 决定，优先级：
+
+```
+1. FIELD_CORPUS 环境变量
+2. 默认：与本仓库并排的 ../rl-scaffold
+```
+
+```bash
+# 默认布局（两个仓库并排）→ 什么都不用设
+python checks.py
+
+# 别处
+FIELD_CORPUS=/path/to/rl-scaffold python checks.py
+```
+
+⚠️ **没有语料时不会静默通过。** 需要语料的六条检查（B-D1 / B-D2 / B-D7 /
+B-D11 / B-D14 / B-D15）会**显式标成"跳过"**并计入单独的计数——因为
+**跳过不等于通过，它们什么都没验**。
+
+### 这个仓库有两半，其中一半根本不碰语料
+
+| 半边 | 模块 | 需要语料吗 |
+|---|---|---|
+| **机制层** | `spectral` `geometry` `connectivity` `curvature` `curvature_split` `ollivier` `field` `ppr` `metrics` `conformal` `knockout` `synthetic` `direction` `directed` `attack` `invariants` | **不需要**，可以脱开任何语料单独用 |
+| **实验层** | `graph` `checks` 与 `phase*.py` | 需要（`graph` 的纯图工具仍不需要） |
+
+⚠️ 这条"机制层不需要语料"是**被自己的测试打掉过一次**才成立的：
+原来 `graph.py` 在**模块导入时**就连语料，于是 `curvature.py` 只想拿一个
+`degrees` 也被拖去要语料。改成**延迟挂载**之后才为真。见 `graph.py:load_nodes` 的注释。
 
 ---
 
@@ -24,34 +63,34 @@
 | C7 可用性 | **一半成立** | 无参数判据召回 9/9 vs 基线 7/9 |
 | 曲率 Forman | **被证伪** | 度数项方差占比 1.054 |
 | 曲率 Ollivier-Ricci | **未被证伪，仅 1 条边支撑** | 唯一界面桥 κ = −0.500 |
+| 界面桥（合成图，n=10） | **成立** | 界面 vs 悬边 AUC = 1.000，四张图全部完全分开 |
 
 ---
 
 ## 怎么跑
 
 ```
-cd <rl-scaffold>
-
-python field/checks.py              # B-D 否证检查（12 条产物 + 1 条数据）
-python field/phase1.py              # 图 / 谱 / 有效电阻 / Forman / Fiedler 切 / 空间
-python field/curvature_compare.py   # Ollivier-Ricci vs Forman（含三条手算自检）
-python field/phase2c.py             # C2/C3 可控性（Mantel 置换检验）
-python field/phase3.py              # C4 入口鲁棒性 + 匹配器排序诊断
-python field/phase4.py              # C5 可判据性（go/no-go）
-python field/phase5.py              # C6 遗忘
-python field/phase6.py              # C7 可用性 + 消融
+python checks.py              # B-D 否证检查（19 条产物 + 1 条数据；缺语料时 6 条跳过）
+python phase1.py              # 图 / 谱 / 有效电阻 / Forman / Fiedler 切 / 空间
+python curvature_compare.py   # Ollivier-Ricci vs Forman（含三条手算自检）
+python phase2c.py             # C2/C3 可控性（Mantel 置换检验）
+python phase3.py              # C4 入口鲁棒性 + 匹配器排序诊断
+python phase4.py              # C5 可判据性（go/no-go）
+python phase5.py              # C6 遗忘
+python phase6.py              # C7 可用性 + 消融
 
 # 方法推荐 ⑤–⑩ 带进来的探针
-python field/phase2d.py             # 五种读数正面对比（推荐①的判决）
-python field/phase4b.py             # sweep 电导当判断统计量 + 配对检验（推荐②③）
-python field/phase4c.py             # 谱模式敲除（推荐⑤）
-python field/phase7a.py             # 方向一致性 + 多数派免疫（推荐⑦）
-python field/phase7b.py             # 合成图界面桥机制验证（推荐⑥）
-python field/phase7c.py             # 有向谱与有向 OR（推荐⑧）
-python field/phase7d.py             # 攻击类型学 + 随机图不变量（推荐⑨⑩）
+python phase2d.py             # 五种读数正面对比（推荐①的判决）
+python phase4b.py             # sweep 电导当判断统计量 + 配对检验（推荐②③）
+python phase4c.py             # 谱模式敲除（推荐⑤）
+python phase7a.py             # 方向一致性 + 多数派免疫（推荐⑦）
+python phase7b.py             # 合成图界面桥机制验证（推荐⑥，不需要语料）
+python phase7c.py             # 有向谱与有向 OR（推荐⑧）
+python phase7d.py             # 攻击类型学 + 随机图不变量（推荐⑨⑩）
 ```
 
-全部零新依赖（复用 `requirements.txt` 里已有的 PyYAML），全部确定性，总耗时秒级。
+唯一的依赖是 **PyYAML**（为了复用上游的 front matter 解析器，不重写它）。
+全部确定性，总耗时秒级。
 
 （`phase2.py` 与 `phase2b_readout.py` 是过程记录：前者是**作废**的那版检验，
 后者是诊断出它为什么作废的探针。留着是为了可审计，不要拿它们当结论。）

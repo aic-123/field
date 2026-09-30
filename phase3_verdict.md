@@ -1,6 +1,6 @@
 # Phase 3 判决（C4 入口鲁棒性）
 
-> 跑法：`python field/phase3.py`（0.6 秒）· `python field/checks.py`
+> 跑法：`python phase3.py`（0.6 秒）· `python checks.py`
 > 产物：`phase3_robustness.md`
 
 数字与判定分开。**A 部分的结论推翻了上游自己的诊断**，所以先写它。
@@ -116,7 +116,7 @@ Phase 3 说清楚了这个判据要替代什么：
 ## C. B-D 检查
 
 ```
-python field/checks.py
+python checks.py
   产物检查：12 条，0 条命中
   数据检查： 1 条，1 条命中（B-D7，靶子在上游数据）
 ```

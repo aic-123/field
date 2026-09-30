@@ -31,8 +31,11 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent
-sys.path.insert(0, str(ROOT / "tools"))
+
+import corpus as C           # noqa: E402
+
+# 语料位置显式化（默认 ../rl-scaffold，可用 FIELD_CORPUS 覆盖）。见 corpus.py。
+CORPUS, fp = C.attach()
 
 import graph as G            # noqa: E402
 import spectral as S         # noqa: E402
@@ -40,7 +43,6 @@ import field as F            # noqa: E402
 import ppr                   # noqa: E402
 import metrics as M          # noqa: E402
 import conformal as CF       # noqa: E402
-import find_path as fp       # noqa: E402
 import probe_gaps as pg      # noqa: E402
 
 K_MAIN = 3

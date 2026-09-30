@@ -1,0 +1,29 @@
+# 为什么需要这个文件：
+# `.gitattributes` 管得住 git，**管不住编辑器**。
+# 少了它，编辑器一存盘就按平台换行改写，行尾缺陷会反复复发
+# （本仓库已经因此复发过两次）。
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+# 尾空格会让 diff 变脏，而这个产品的核心性质是「逐行可 diff」
+trim_trailing_whitespace = true
+
+[*.md]
+# Markdown 的**行尾两个空格 = 硬换行**，是有意义的语法，不能一律删。
+# 所以这一类单独关掉尾空格裁剪——代价是 Markdown 里的尾空格要人工留意。
+trim_trailing_whitespace = false
+
+[*.{yaml,yml,json}]
+indent_style = space
+
+[*.py]
+indent_style = space
+indent_size = 4
+
+[*.md]
+indent_style = space
+indent_size = 2

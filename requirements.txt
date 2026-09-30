@@ -1,0 +1,9 @@
+# 唯一的依赖。
+#
+# 为什么要它：这个仓库**不重写**上游的 front matter 解析器，而是复用
+# rl-scaffold 的 `tools/find_path.py`（它用 yaml 读 front matter）。
+# 所以只有这一条，没有别的。
+#
+# 上游用的是 3.9 与 3.12 两头钉住；本仓库同样兼容（全部模块都带
+# `from __future__ import annotations`，没有 3.10+ 专有语法）。
+PyYAML>=6.0

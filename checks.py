@@ -52,6 +52,19 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 EXEMPT = {"checks.py"}
 
+# 语料位置显式化。见 corpus.py：默认 ../rl-scaffold，可用 FIELD_CORPUS 覆盖。
+import corpus as C          # noqa: E402
+
+# 需要语料的三条检查在语料缺失时**显式跳过**，不是假装通过。
+# 「跳过」必须看得见 —— 静默变绿和静默变红一样，都是把没验的东西说成验过了。
+SKIP_NO_CORPUS = (f"**跳过**：没有语料。设 {C.ENV_VAR}=<rl-scaffold 路径> 后再跑")
+#
+# 需要语料的是这几条，理由各不同：
+#   B-D1 / B-D2   构造与意图，必须在一张真图上才有意义
+#   B-D7          靶子就是上游数据本身（HELD_OUT）
+#   B-D11/D14/D15 性质本身不需要语料，但**实例**用的是真图
+#                 （换成合成图也成立，只是那样钉住的就不是这张图上的数了）
+
 # B-D4：真值量词汇。与 nested `checks.py:73-74` 的 B2 同一张词表。
 TRUTH_WORDS = re.compile(r"weight|score|rank|truth|threshold", re.I)
 
@@ -346,6 +359,9 @@ def bd7_heldout_must_not_contain_cues():
       (b) 承认 15/17 不是同义改写命中率，改个名字。
     两条都不许删数据（上游纪律：语料只加不减）。
     """
+    if not C.is_available():
+        return None, SKIP_NO_CORPUS
+    C.attach()
     import probe_gaps as pg
     raw, _ = _graph().load_nodes()
     hits = []
@@ -359,6 +375,8 @@ def bd7_heldout_must_not_contain_cues():
 # ── 可执行检查（跑一遍，不是扫）────────────────────────────────────────
 
 def bd1_determinism() -> tuple[bool, str]:
+    if not C.is_available():
+        return None, SKIP_NO_CORPUS
     import graph as G
     import spectral as S
     import field as F
@@ -378,6 +396,8 @@ def bd1_determinism() -> tuple[bool, str]:
 
 
 def bd2_intent_must_matter() -> tuple[bool, str]:
+    if not C.is_available():
+        return None, SKIP_NO_CORPUS
     import graph as G
     import spectral as S
     import field as F
@@ -464,6 +484,8 @@ def bd11_sweep_cut_parameter_insensitive() -> tuple[bool, str]:
     这是"没有位置参数"这句话的可执行形式：如果换一个 c 就换一个构造，
     那 c 就是一个没被承认的位置参数。
     """
+    if not C.is_available():
+        return None, SKIP_NO_CORPUS
     import graph as G
     import ppr
     raw, _ = G.load_nodes()
@@ -536,6 +558,8 @@ def bd14_consensus_is_popularity_immune() -> tuple[bool, str]:
     ——**被这条性质打掉**，换成 max-min + 先去重才成立。
     所以这条检查有双向作用：既要 max-min 免疫，也要**证明不免疫的那种会被抓**。
     """
+    if not C.is_available():
+        return None, SKIP_NO_CORPUS
     import graph as G
     import spectral as S
     import field as F
@@ -573,6 +597,8 @@ def bd15_knockout_does_not_touch_the_graph() -> tuple[bool, str]:
 
     防空转：敲除必须真的改变场；如果它是空操作，那"图没变"就没有意义。
     """
+    if not C.is_available():
+        return None, SKIP_NO_CORPUS
     import graph as G
     import spectral as S
     import field as F
@@ -627,12 +653,14 @@ DATA_CHECKS = [
 
 
 def _run(name, desc, fn):
+    """跑一条检查。返回 True / False / None（None = 跳过，不计入绿也不计入红）。"""
     out = fn()
     if isinstance(out, tuple):
         ok, why = out
     else:
         ok, why = (not out), (f"{len(out)} 处命中" + (f"：{out[:2]}" if out else ""))
-    print(f"  {name:<6s} {desc:<26s} {'过' if ok else '**命中**'}   {why}")
+    mark = "跳过" if ok is None else ("过" if ok else "**命中**")
+    print(f"  {name:<6s} {desc:<26s} {mark}   {why}")
     return ok
 
 
@@ -640,21 +668,36 @@ def main() -> int:
     print("B-D 否证检查 —— 抓的是**不许出现**的东西。\n")
     print("── 本模块产物 ──")
     bad = 0
+    skipped = []
     for name, desc, fn in CHECKS:
-        if not _run(name, desc, fn):
+        r = _run(name, desc, fn)
+        if r is None:
+            skipped.append(name)
+        elif not r:
             bad += 1
-    if not _run("----", "豁免集合自我钉住", test_exemption_is_exactly_these_files):
+    r = _run("----", "豁免集合自我钉住", test_exemption_is_exactly_these_files)
+    if r is None:
+        skipped.append("----")
+    elif not r:
         bad += 1
 
     print("\n── 上游数据 ──")
     data_bad = 0
     for name, desc, fn in DATA_CHECKS:
-        if not _run(name, desc, fn):
+        r = _run(name, desc, fn)
+        if r is None:
+            skipped.append(name)
+        elif not r:
             data_bad += 1
 
-    print(f"\n产物检查：{len(CHECKS)+1} 条，{bad} 条命中")
-    print(f"数据检查：{len(DATA_CHECKS)} 条，{data_bad} 条命中"
-          f"{'（靶子在上游数据，修法需拍板，见函数注释）' if data_bad else ''}")
+    total = len(CHECKS) + 1 + len(DATA_CHECKS)
+    print(f"\n共 {total} 条：{total - bad - data_bad - len(skipped)} 条过、"
+          f"{bad + data_bad} 条命中、{len(skipped)} 条跳过")
+    if skipped:
+        print(f"⚠️ 跳过的是 {'、'.join(skipped)} —— **跳过不等于通过**，"
+              f"它们什么都没验。要跑全，设 {C.ENV_VAR}=<rl-scaffold 路径>。")
+    if data_bad:
+        print("⚠️ 数据命中的靶子在上游数据，修法需拍板，不自行放宽、不删数据（见函数注释）。")
     print(f"退出码 {1 if (bad or data_bad) else 0}")
     return 1 if (bad or data_bad) else 0
 

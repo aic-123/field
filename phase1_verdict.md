@@ -1,6 +1,6 @@
 # Phase 1 判决
 
-> 跑法：`python field/phase1.py`（0.2 秒）
+> 跑法：`python phase1.py`（0.2 秒）
 > 产物：`phase1_graph.md` · `phase1_spectrum.md` · `phase1_curvature.md` · `phase1_geometry.md`
 > 原始基线：`raw_*.txt`
 
@@ -179,7 +179,7 @@ Phase 2（可控性 C2 / C3）**不受 kill test 2 影响**，可以开。
 
 # 7. 追加（Phase 1b）：**对上面 kill test 2 的判决的修正**
 
-> 产物：`field/phase1b_curvature_compare.md` · `field/ollivier.py`
+> 产物：`phase1b_curvature_compare.md` · `ollivier.py`
 > 检查：`B-D8`（曲率必须对上三条手算值）
 
 ## 7.1 我上面那个判决是拿 Forman 下的，而设计稿要的是 OR
@@ -190,7 +190,7 @@ Phase 2（可控性 C2 / C3）**不受 kill test 2 影响**，可以开。
 
 ## 7.2 OR 真做出来了，而且**不是**度数代理
 
-`field/ollivier.py`：纯标准库、整数化的最小费用流（SSP + SPFA）算精确 W₁。
+`ollivier.py`：纯标准库、整数化的最小费用流（SSP + SPFA）算精确 W₁。
 自检三条**手算值**全过：
 
 ```

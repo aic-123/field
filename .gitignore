@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 检查的自检会临时种入这个文件，跑完自己删。保险起见也挡一下。
+_planted_probe.py

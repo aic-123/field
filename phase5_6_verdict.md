@@ -1,6 +1,6 @@
 # Phase 5 / 6 判决（C6 遗忘 · C7 可用性）
 
-> 跑法：`python field/phase5.py` · `python field/phase6.py` · `python field/checks.py`
+> 跑法：`python phase5.py` · `python phase6.py` · `python checks.py`
 > 产物：`phase5_decay.md` · `phase6_usability.md`
 
 ---
