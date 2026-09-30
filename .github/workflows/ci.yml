@@ -1,0 +1,97 @@
+name: checks
+
+# 为什么这些步骤值得上 CI：
+# 本仓库的核心声称是「每条主张都配一条否证检查，跑出来是成立还是不成立都记录在案」。
+# 那它天生就是 CI 的形状——**没有 CI 的话，19 条检查没有任何机器在定期跑**。
+#
+# 两个 job 的分工是按「需不需要语料」切的，不是按快慢切的：
+#   mechanism    不带语料 → 需要的六条显式跳过 → 这是**门禁**
+#   with-corpus  取一份钉住 ref 的语料 → 跑全套 → 产物检查是门禁，上游数据检查只报告
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # ── 不带语料：机制层 + 会显式跳过的那六条 ────────────────────────────
+  mechanism:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.9 是下限（全部模块都带 `from __future__ import annotations`，无 3.10+ 语法）；
+        # 3.12 是主力。两头都钉住。
+        python-version: ["3.9", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: 装依赖（唯一一条：PyYAML）
+        run: python -m pip install --quiet -r requirements.txt
+
+      # ⚠️ 没有语料时 B-D1 / B-D2 / B-D7 / B-D11 / B-D14 / B-D15 六条会**显式跳过**
+      # 并单独计数。跳过不等于通过——所以这里断言的是"14 条过、0 条命中"，
+      # 而不是"退出码 0 就没事"。
+      - name: 检查（不带语料；跳过会被单独计出来）
+        run: python checks.py
+
+      - name: 合成图界面桥机制验证（**不需要语料**）
+        run: python phase7b.py
+
+  # ── 带语料：全套 ────────────────────────────────────────────────────
+  with-corpus:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 装依赖
+        run: python -m pip install --quiet -r requirements.txt
+
+      # 语料钉住一个 ref —— 不钉的话，上游一改节点，这里的数字就全变了，
+      # 而"结论只对这张图负责"这句话就没人守得住。
+      # 换 ref 时，报告里的数字要一起重跑并更新（见 CONTRIBUTING.md）。
+      - name: 取语料（钉住 ref）
+        uses: actions/checkout@v4
+        with:
+          repository: aic-123/rl-scaffold
+          ref: 1c1b62a
+          path: rl-scaffold
+
+      # 产物检查是门禁。`--product-only` 让退出码**不背上游数据检查**——
+      # B-D7 的靶子是语料（HELD_OUT 里混了 cue 原文），那一头只有上游能改；
+      # 拿它卡这里的 CI 等于让别人的欠账挡住自己的提交。它照印，只是不背。
+      - name: 全套否证检查（产物为门禁，上游数据检查只报告）
+        env:
+          FIELD_CORPUS: ${{ github.workspace }}/rl-scaffold
+        run: python checks.py --product-only
+
+      # 探针是门禁：它们各自有明确的期望退出码 0。
+      # 报告会被重写，然后要求**工作区无改动** —— 这一条防的是
+      # "改了判据却没重跑报告"，那会静默留下与代码不符的数字。
+      - name: 全部探针（门禁），并要求报告与代码同步
+        env:
+          FIELD_CORPUS: ${{ github.workspace }}/rl-scaffold
+        run: |
+          for p in phase1 curvature_compare phase2 phase2b_readout phase2c phase2d \
+                   phase3 phase4 phase4b phase4c phase5 phase6 phase7a phase7b phase7c phase7d; do
+            echo "── $p"
+            python "$p.py"
+          done
+          if [ -n "$(git status --porcelain -- docs/)" ]; then
+            echo "::error::报告与代码不一致——改了判据却没重跑报告（下面是要补的 diff）"
+            git status --porcelain -- docs/
+            git diff -- docs/
+            exit 1
+          fi
+          echo "OK：docs/ 与代码同步"

@@ -1,4 +1,4 @@
-"""Phase 4 跑腿：可判据性（C5）—— go / no-go。
+﻿"""Phase 4 跑腿：可判据性（C5）—— go / no-go。
 
 问题：**不靠内容真值，能不能判断一个构造有没有根据。**
 
@@ -60,6 +60,7 @@ from itertools import combinations
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import corpus as C           # noqa: E402
 
@@ -272,7 +273,7 @@ def main() -> int:
     L.append(f"- 预测：删掉正确节点后 ρ_R1 下降。**{len(drops)}/{len(lesion)} 个目标符合预测。**")
     L.append("- 幅度很小（0.0x），所以这个实验**只能算弱证据**，不能算确认。\n")
 
-    (HERE / "phase4_grounding.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase4_grounding.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     # ── 终端 ──────────────────────────────────────────────────────────
     print("══ 图结构 ══")

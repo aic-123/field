@@ -1,4 +1,4 @@
-"""Phase 5 跑腿：遗忘（C6）。
+﻿"""Phase 5 跑腿：遗忘（C6）。
 
 设计稿 §3 Phase 5：
 
@@ -51,6 +51,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import corpus as C           # noqa: E402
 
@@ -189,7 +190,7 @@ def main() -> int:
     L.append("而不是「确定变多解」。前者可测且已测到，后者在这套机制里做不到。")
     L.append("")
 
-    (HERE / "phase5_decay.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase5_decay.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     print("── 遗忘曲线 ──")
     for r in rows:

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 语料本身的问题（节点、cue、阈值、HELD_OUT）
+    url: https://github.com/aic-123/rl-scaffold/issues
+    about: |
+      本仓库只读语料、不写语料。凡是"某个节点的内容/来源不对""检索阈值不合理"
+      「HELD_OUT 里混了 cue 原文」这一类，靶子都在语料那一侧——请提到 rl-scaffold。
+      本仓库能处理的只有：判据、机制、以及"哪些声称被推翻了"。
+  - name: 读数不对（复现不出来）
+    url: https://github.com/aic-123/field/blob/main/CONTRIBUTING.md
+    about: 先读 CONTRIBUTING.md 的「语料的 ref 变了怎么办」——CI 里语料的 ref 是钉住的。

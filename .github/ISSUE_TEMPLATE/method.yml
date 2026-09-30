@@ -1,0 +1,53 @@
+name: 一条新判据 / 新方法
+description: 提出一条可证伪的判据，或者一种值得试的方法
+title: "[判据] "
+labels: ["method"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        这个仓库只接受**可证伪**的东西。所以下面每一项都要能填出来；
+        填不出来的，说明它现在还是一个比喻，还不是一条判据。
+
+  - type: textarea
+    id: claim
+    attributes:
+      label: 主张
+      description: 一句话。它必须**可能为假**——如果无论跑出什么数它都成立，那不是主张。
+    validations:
+      required: true
+
+  - type: textarea
+    id: criterion
+    attributes:
+      label: 判据（什么算通过、什么算否证）
+      description: |
+        ⚠️ 这一项必须在看结果**之前**写死。写不出否证条件的，先别开 issue。
+    validations:
+      required: true
+
+  - type: textarea
+    id: how
+    attributes:
+      label: 怎么量
+      description: 用哪个量、在哪张图上、对照是什么。对照尤其重要——没有对照的数字不算证据。
+    validations:
+      required: true
+
+  - type: textarea
+    id: falsify
+    attributes:
+      label: 如果它不成立，我们应当看到什么
+      description: 写清"什么样的一条读数会让我放弃这个主张"。
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: discipline
+    attributes:
+      label: 纪律
+      options:
+        - label: 我接受"判据先写死、事后不改判据"（要改只能改被检验的对象，并如实记为修正）
+          required: true
+        - label: 我接受"失败的结论一并列出"
+          required: true

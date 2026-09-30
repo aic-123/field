@@ -1,4 +1,4 @@
-"""Phase 2 诊断：C2 失败到底是"控制坏了"还是"读数坏了"。
+﻿"""Phase 2 诊断：C2 失败到底是"控制坏了"还是"读数坏了"。
 
 ---
 为什么必须做这一步，而不是直接换读数
@@ -36,6 +36,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import graph as G          # noqa: E402
 import spectral as S       # noqa: E402
@@ -168,7 +169,7 @@ def main() -> int:
     L.append("\n（随机意图的场本来就没有结构，所以它的恢复率是「随机也能对」的噪声底。）")
     L.append("三层都要跟这个底比，不是跟 0 比。）\n")
 
-    (HERE / "phase2b_readout.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase2b_readout.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     print("── 三层意图恢复率（尺子 = 意图空间距离，零线 1/12=0.083）──")
     for e, alpha, t, a0, a1, a2, sf, ss, sh in rows:

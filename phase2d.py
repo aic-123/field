@@ -1,4 +1,4 @@
-"""Phase 2d：**换读数**的正面对比（方法推荐 ①②③）。
+﻿"""Phase 2d：**换读数**的正面对比（方法推荐 ①②③）。
 
 问题：原来的读数（场自己均值以上的节点）在 Phase 2 被量出丢信息——
 
@@ -24,6 +24,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import graph as G          # noqa: E402
 import spectral as S       # noqa: E402
@@ -164,7 +165,7 @@ def main() -> int:
     L.append("- 没有用 W₁ 做集合距离。全图上的精确 W₁ 需要运输问题，")
     L.append("  36×36 的规模下整数化后的流量太大，本阶段不做。软读数（L1）")
     L.append("  已经能定位「损失在哪一层」，不需要再引入第三种集合度量。")
-    (HERE / "phase2d_readout_compare.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase2d_readout_compare.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     print("── 五种读数，18 组均值 ──")
     for k in keys:

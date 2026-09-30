@@ -1,4 +1,4 @@
-"""Phase 3 跑腿：入口鲁棒性（C4）。
+﻿"""Phase 3 跑腿：入口鲁棒性（C4）。
 
 设计稿 §3 Phase 3 的两件事：
 
@@ -40,6 +40,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import corpus as C           # noqa: E402
 
@@ -213,7 +214,7 @@ def main() -> int:
             L.append(f"- {label}：命中率 {r:.3f}，位次中位 {m}")
     L.append("")
 
-    (HERE / "phase3_robustness.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase3_robustness.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     # ── 终端 ──────────────────────────────────────────────────────────
     print("══ A · 瓶颈在排序还是在判据线 ══")

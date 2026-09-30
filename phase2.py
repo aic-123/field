@@ -1,4 +1,4 @@
-"""Phase 2 跑腿（**这一版作废，留着是为了可审计**）：可控性（C2 / C3）。
+﻿"""Phase 2 跑腿（**这一版作废，留着是为了可审计**）：可控性（C2 / C3）。
 
 设计稿 §3 Phase 2 要验三件事：
 
@@ -39,6 +39,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import graph as G          # noqa: E402
 import spectral as S       # noqa: E402
@@ -227,7 +228,7 @@ def main() -> int:
     L.append(f"- {len(fields)} 个意图给出的**场**之间，最小距离 {dmin:.6f}")
     L.append("- 这一层恒真（线性 ODE + L⁺ 在常数补上可逆），所以它**不作为 C2 的证据**。\n")
 
-    (HERE / "phase2_controllability.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase2_controllability.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     # ── 终端摘要 ──────────────────────────────────────────────────────
     print("── C3 确定性 ──")

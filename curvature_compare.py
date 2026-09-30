@@ -1,4 +1,4 @@
-"""Phase 1 补做：Ollivier-Ricci 与 Forman 的正面对比。
+﻿"""Phase 1 补做：Ollivier-Ricci 与 Forman 的正面对比。
 
 设计稿 §1.1 原本指定的是 Ollivier-Ricci。Phase 1 时用 Forman 顶替，
 结果被项分解证伪（度数项方差占比 1.054）。本模块把 OR 真做出来，
@@ -23,6 +23,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import graph as G            # noqa: E402
 import curvature as C        # noqa: E402
@@ -134,7 +135,7 @@ def main() -> int:
     L.append("- 没有把 OR 用到 Phase 4 的 ρ 里。Phase 4 已按预先登记的 R1（共振）判决，")
     L.append("  事后把 OR 塞进去就是改判据。OR 的用途只能登记到 Phase 7。")
     L.append("- 没有扫 α（惰性参数）。本模块固定 α = 1/2。")
-    (HERE / "phase1b_curvature_compare.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase1b_curvature_compare.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     print("── 自检 ──")
     for name, ok, why in O.self_test():

@@ -1,4 +1,4 @@
-"""Phase 6 跑腿：可用性（C7）与消融。
+﻿"""Phase 6 跑腿：可用性（C7）与消融。
 
 设计稿 §3 Phase 6 原本写的是"用轨迹构造替换 `find_path.py` 的六步模板"。
 **实际做出来的东西不是那个**：Phase 3/4 建立的是一条
@@ -38,6 +38,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import corpus as C           # noqa: E402
 
@@ -171,7 +172,7 @@ def main() -> int:
              "A3 证明轨迹有用，A1 不适用")
     L.append("")
 
-    (HERE / "phase6_usability.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase6_usability.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     print("── C7a 无参数判据 vs 基线 ──")
     for name, m in (("TAU 线（基线）", tau), ("场:可构造性（无参数）", fld)):

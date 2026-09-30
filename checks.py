@@ -664,8 +664,21 @@ def _run(name, desc, fn):
     return ok
 
 
-def main() -> int:
+def main(argv=None) -> int:
+    """跑全部检查。
+
+    `--product-only`：退出码只反映**本仓库产物**的检查，不反映上游数据检查。
+    为什么需要它：`B-D7` 的靶子是**语料**（`HELD_OUT` 里混了 cue 原文），
+    不是本仓库的产物。拿它当本仓库的门禁，等于让上游的欠账卡住这里的 CI——
+    而那一头只有上游能改。所以 CI 用这个开关：**报告照印，退出码不背它。**
+    """
+    import sys as _sys
+    args = list(_sys.argv[1:] if argv is None else argv)
+    product_only = "--product-only" in args
+
     print("B-D 否证检查 —— 抓的是**不许出现**的东西。\n")
+    if product_only:
+        print("（--product-only：退出码只看本仓库产物；上游数据检查照印但不背）\n")
     print("── 本模块产物 ──")
     bad = 0
     skipped = []
@@ -698,8 +711,11 @@ def main() -> int:
               f"它们什么都没验。要跑全，设 {C.ENV_VAR}=<rl-scaffold 路径>。")
     if data_bad:
         print("⚠️ 数据命中的靶子在上游数据，修法需拍板，不自行放宽、不删数据（见函数注释）。")
-    print(f"退出码 {1 if (bad or data_bad) else 0}")
-    return 1 if (bad or data_bad) else 0
+        if product_only:
+            print("   本轮带 --product-only，所以它不进退出码 —— 但它**仍然是红的**。")
+    fail = bool(bad or (data_bad and not product_only))
+    print(f"退出码 {1 if fail else 0}")
+    return 1 if fail else 0
 
 
 if __name__ == "__main__":

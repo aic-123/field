@@ -1,4 +1,4 @@
-"""Phase 4c：谱模式敲除（方法推荐 ⑤）。
+﻿"""Phase 4c：谱模式敲除（方法推荐 ⑤）。
 
 替代 Phase 4 那个失败的删节点损伤实验。
 
@@ -22,6 +22,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import graph as G          # noqa: E402
 import spectral as S       # noqa: E402
@@ -102,7 +103,7 @@ def main() -> int:
     L.append("- 没有把敲除结果与「随机方向」作对照（敲一个非特征方向）。")
     L.append("  理由：特征基是场的自然分解，随机方向不对应任何结构含义；")
     L.append("  但这也意味着「效应大」只能解释为「这个模式在这里重要」，不能解释为因果。")
-    (HERE / "phase4c_knockout.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase4c_knockout.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     print("── 谱模式敲除（36 个种子）──")
     print(f"  k=1 夺魁 {wins[1]}/{n_seed} = {wins[1]/n_seed:.3f}   随机底 {UNIFORM:.3f}"

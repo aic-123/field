@@ -1,4 +1,4 @@
-"""Phase 2 重做：把意图换成设计稿本来写的那种（有符号种子向量）。
+﻿"""Phase 2 重做：把意图换成设计稿本来写的那种（有符号种子向量）。
 
 ---
 为什么重做，以及为什么这不是 p-hacking
@@ -51,6 +51,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import graph as G          # noqa: E402
 import spectral as S       # noqa: E402
@@ -210,7 +211,7 @@ def main() -> int:
         L.append(f"| {alpha} | {min(ss)}–{max(ss)} | {len(cc)}/{len(intents)} |")
     L.append("")
 
-    (HERE / "phase2c_controllability.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase2c_controllability.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     print(f"锚点 {len(anchors)}：{'、'.join(anchors)}")
     print(f"意图空间（有效电阻）sd = {spread(refR)['sd']:.4f}   "

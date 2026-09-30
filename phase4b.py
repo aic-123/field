@@ -1,4 +1,4 @@
-"""Phase 4b：把 sweep 电导当**判断用的统计量**来检验（方法推荐 ②③④）。
+﻿"""Phase 4b：把 sweep 电导当**判断用的统计量**来检验（方法推荐 ②③④）。
 
 Phase 2d 的结论把推荐①重新定位了：
 
@@ -31,6 +31,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import corpus as C           # noqa: E402
 
@@ -307,7 +308,7 @@ def main() -> int:
     L.append("- 没有把任何两个统计量合并成一个。上游 R-8：两个指标永不合并。")
     L.append("- 没有做 DeLong 检验做交叉验证。它在 n=13 上不可靠，")
     L.append("  而精确符号翻转已经把这个规模上的检验做尽了。")
-    (HERE / "phase4b_sweep_statistic.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase4b_sweep_statistic.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     print("── 五个统计量的 AUC（正例 9 / 负例 4）──")
     for c in C_GRID:

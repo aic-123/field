@@ -1,4 +1,4 @@
-"""Phase 7b：合成图上的界面桥机制验证（方法推荐 ⑥）。
+﻿"""Phase 7b：合成图上的界面桥机制验证（方法推荐 ⑥）。
 
 ---
 要验的那一条，以及为什么它需要合成图
@@ -36,6 +36,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import ollivier as O        # noqa: E402
 import synthetic as SYN     # noqa: E402
@@ -147,7 +148,7 @@ def main() -> int:
     L.append("### 没做的事\n")
     L.append("- 合成图只用来做机制验证，**不用来报任何性能数字**。")
     L.append("- 没有调 α（惰性参数），固定 1/2。")
-    (HERE / "phase7b_synthetic_interfaces.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase7b_synthetic_interfaces.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     print("── 合成图上的界面桥验证 ──")
     for r in res:

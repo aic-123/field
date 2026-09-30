@@ -34,6 +34,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+import paths               # noqa: E402
 
 import graph as G          # noqa: E402
 import spectral as S       # noqa: E402
@@ -159,7 +160,7 @@ def main() -> int:
     L.append("- 没有把有向性并进 Phase 1–6 的任何判据。变量一次只动一个。")
     L.append("- 没有分解「方向冲突」对它有多大影响（那需要知道正确方向，")
     L.append("  而上游文档 `SPEC.md:128` 与 `by-situation.md:298` 互相矛盾）。")
-    (HERE / "phase7c_directed.md").write_text("\n".join(L) + "\n", encoding="utf-8")
+    paths.report("phase7c_directed.md").write_text("\n".join(L) + "\n", encoding="utf-8")
 
     print("── 有向谱与有向 OR ──")
     print(f"  π 最大/最小 = {spread:.1f} 倍（均匀是 1.0）")
